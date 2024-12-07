@@ -14,6 +14,9 @@ interface MessageDao {
     @Query("SELECT * FROM messages WHERE senderId = :senderId")
     suspend fun getMessagesBySender(senderId: String): List<Message>
 
+    @Query("SELECT * FROM messages WHERE senderId = :senderId OR receiverId = :senderId")
+    suspend fun getMessagesByFriendId(senderId: String): List<Message>
+
     @Query("SELECT * FROM messages WHERE senderId = :senderId")
     fun getMessagesBySenderAsync(senderId: String): Flow<List<Message>>
 }

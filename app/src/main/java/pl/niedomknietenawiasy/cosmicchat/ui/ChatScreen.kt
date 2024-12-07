@@ -70,18 +70,9 @@ fun ChatScreenContent(
     }
 
     val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = messages.value.size)
-//    val messagesLoadedFirstTime = chatViewModel.messagesLoadedFirstTime.value
-//    val messageInserted = chatViewModel.messageInserted.value
     var isChatInputFocus by remember {
         mutableStateOf(false)
     }
-//    LaunchedEffect(key1 = messagesLoadedFirstTime, messages, messageInserted) {
-//        if (messages.isNotEmpty()) {
-//            scrollState.scrollToItem(
-//                index = messages.size - 1
-//            )
-//        }
-//    }
 
     val imePaddingValues = PaddingValues()
     val imeBottomPadding = imePaddingValues.calculateBottomPadding().value.toInt()
@@ -125,23 +116,20 @@ fun ChatScreenContent(
             state = scrollState
         ) {
             items(messages.value) { message ->
-                when (message.senderId.toString() == myId){
-                    true -> {
-                        ReceivedMessageRow(
-                            text = message.content,
-                            opponentName = friend.value?.name ?: "",
-                            quotedMessage = null,
-                            messageTime = message.date.format(DateTimeFormatter.ISO_DATE_TIME)
-                        )
-                    }
-                    false ->{
-                        SentMessageRow(
-                            text = message.content,
-                            quotedMessage = null,
-                            messageTime = message.date.format(DateTimeFormatter.ISO_DATE_TIME),
-                            messageStatus = message.status
-                        )
-                    }
+                if (message.senderId == myId) {
+                    SentMessageRow(
+                        text = message.content,
+                        quotedMessage = null,
+                        messageTime = "${message.date.hour}:${message.date.minute}",
+                        messageStatus = message.status
+                    )
+                } else {
+                    ReceivedMessageRow(
+                        text = message.content,
+                        opponentName = friend.value?.name ?: "",
+                        quotedMessage = null,
+                        messageTime = "${message.date.hour}:${message.date.minute}"
+                    )
                 }
             }
 
@@ -151,7 +139,8 @@ fun ChatScreenContent(
             onMessageChange = { messageContent ->
                 chatViewModel.sendMessage(
                     Message(
-                        senderId = myId,
+                        senderId = myId!!,
+                        receiverId = friend.value?.id ?: "",
                         content = messageContent,
                         date = LocalDateTime.now(),
                         status = MessageStatus.SENT

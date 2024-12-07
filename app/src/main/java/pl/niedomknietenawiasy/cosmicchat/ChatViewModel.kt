@@ -1,5 +1,6 @@
 package pl.niedomknietenawiasy.cosmicchat
 
+import android.content.SharedPreferences
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,19 +9,29 @@ import pl.niedomknietenawiasy.cosmicchat.model.Api
 import pl.niedomknietenawiasy.cosmicchat.model.AppDatabase
 import pl.niedomknietenawiasy.cosmicchat.model.Message
 import pl.niedomknietenawiasy.cosmicchat.model.User
+import pl.niedomknietenawiasy.cosmicchat.model.getRandomString
+
 
 class ChatViewModel(
-    val db: AppDatabase
+    val db: AppDatabase,
+    val pref: SharedPreferences
 ): ViewModel() {
     val api = Api()
     val toastMsg = "example toast msg"
     val userList = mutableStateOf(listOf<User>())
-    //TODO: remove hardcoded id
-    val myId = "1"
+    val myId = pref.getString("userId", getRandomString())
 
     init {
         viewModelScope.launch {
-            userList.value = db.userDao().getUsers()
+            val users = db.userDao().getUsers()
+            if (users.isNotEmpty()) {
+                userList.value = users
+            } else {
+                userList.value = dummyUsers
+                dummyUsers.forEach {
+                    db.userDao().insertUser(it)
+                }
+            }
         }
     }
 
@@ -30,7 +41,7 @@ class ChatViewModel(
 
     fun loadMessages(friendId: String) {
         viewModelScope.launch {
-            messages.value = messageDao.getMessagesBySender(friendId)
+            messages.value = messageDao.getMessagesByFriendId(friendId)
         }
     }
 
@@ -48,3 +59,8 @@ class ChatViewModel(
         }
     }
 }
+
+val dummyUsers = listOf(
+    User("someId", "Filip", "active"),
+    User("anotherId", "Jan", "active")
+)

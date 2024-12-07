@@ -26,7 +26,6 @@ fun ChatAppBar(
     modifier: Modifier = Modifier,
     title: String = "Title",
     description: String = "Description",
-    pictureUrl: String? = null,
     onUserNameClick: (() -> Unit)? = null,
     onBackArrowClick: (() -> Unit)? = null,
     onUserProfilePictureClick: (() -> Unit)? = null,
@@ -43,24 +42,14 @@ fun ChatAppBar(
                     shape = CircleShape,
                     color = Color.LightGray
                 ) {
-                    if (pictureUrl != null) {
-                        Image(
-                            painter = painterResource(R.drawable.baseline_assignment_ind_24),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .aspectRatio(1f)
-                                .clickable { onUserProfilePictureClick?.invoke() })
-                    } else {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .aspectRatio(1f)
-                                .clickable { onUserProfilePictureClick?.invoke() })
-                    }
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .fillMaxHeight()
+                            .aspectRatio(1f)
+                            .clickable { onUserProfilePictureClick?.invoke() })
                 }
                 Column(
                     modifier = Modifier

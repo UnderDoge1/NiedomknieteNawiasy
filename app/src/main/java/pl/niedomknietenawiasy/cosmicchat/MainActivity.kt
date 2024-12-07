@@ -1,5 +1,6 @@
 package pl.niedomknietenawiasy.cosmicchat
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import pl.niedomknietenawiasy.cosmicchat.model.DatabaseProvider
 import pl.niedomknietenawiasy.cosmicchat.ui.ChatScreen
 import pl.niedomknietenawiasy.cosmicchat.ui.UserListScreen
@@ -22,7 +25,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val db = DatabaseProvider.getDatabase(this)
-        val viewModel = ChatViewModel(db)
+        val masterKey = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+        val sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
+            "secret_shared_prefs",
+            masterKey,
+            this,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+        val viewModel = ChatViewModel(db, sharedPreferences)
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
