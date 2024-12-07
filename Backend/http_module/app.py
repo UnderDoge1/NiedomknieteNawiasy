@@ -17,6 +17,9 @@ def index():
     return render_template('index.html', spacecrafts=spacecrafts)
 
 
+
+
+#----------------------------------------------HTTP SERVER----------------------------------------------
 @app.route('/register', methods=['POST'])
 def register_spaceship():
 

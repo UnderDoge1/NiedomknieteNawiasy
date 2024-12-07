@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/chat-style.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socket;
+        document.addEventListener("DOMContentLoaded", () => {
+            socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+
+            socket.on('connect', () => {
+                socket.emit('join');
+            });
+
+            socket.on('status', (data) => {
+                var chat = document.querySelector("#chat")
+                chat.value = chat.value + '<' + data.msg + '>\n'
+
+            })
+            socket.on('message', (data) => {
+                var chat = document.querySelector("#chat")
+                chat.value = chat.value + data.msg + '\n'
+
+            })
+            var chat = document.querySelector("#send")
+            chat.addEventListener("click", (element) => {
+                var text = document.querySelector('#text').value
+                document.querySelector('#text').value = ''
+                socket.emit('text', {msg: text});
+            })
+
+        });
+
+        function leave_room() {
+            socket.emit('left', {}, function () {
+                socket.disconnect();
+                // go back to the login page
+                window.location.href = "{{ url_for('index') }}";
+            });
+        };
+    </script>
+    <title>Chat Page</title>
+</head>
+<body>
+<div class="chat-window">
+    <h1> Chat Room</h1>
+    <h2>Room : {{ session['room'] }}</h2>
+    <textarea id="chat" cols="70" rows="10" placeholder="No messages yet" readonly></textarea>
+    <input type="text" id="text" size="60" placeholder="Enter your message here"/>
+    <div class="flex">
+        <button type="button" id="send">Send</button>
+        <button type="button" class="leave-btn" onclick=leave_room()>Leave this Chat</button>
+    </div>
+</div>
+
+</body>
+</html>
