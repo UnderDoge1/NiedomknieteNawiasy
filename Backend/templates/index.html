@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spacecraft Registry</title>
+</head>
+<body>
+    <h1>Spacecraft Registry</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Call Sign</th>
+                <th>Position X</th>
+                <th>Position Y</th>
+                <th>Velocity X</th>
+                <th>Velocity Y</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for spacecraft in spacecrafts %}
+            <tr>
+                <td>{{ spacecraft.id }}</td>
+                <td>{{ spacecraft.call_sign }}</td>
+                <td>{{ spacecraft.pos_x }}</td>
+                <td>{{ spacecraft.pos_y }}</td>
+                <td>{{ spacecraft.vel_x }}</td>
+                <td>{{ spacecraft.vel_y }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>Add a new spacecraft</h2>
+    <form action="/register" method="post">
+        <label for="call_sign">Call Sign:</label>
+        <input type="text" id="call_sign" name="call_sign"><br><br>
+        <label for="pos_x">Position X:</label>
+        <input type="text" id="pos_x" name="pos_x"><br><br>
+        <label for="pos_y">Position Y:</label>
+        <input type="text" id="pos_y" name="pos_y"><br><br>
+        <label for="vel_x">Velocity X:</label>
+        <input type="text" id="vel_x" name="vel_x"><br><br>
+        <label for="vel_y">Velocity Y:</label>
+        <input type="text" id="vel_y" name="vel_y"><br><br>
+        <input type="submit" value="Register">
+    </form>
+</body>
+</html>
