@@ -14,6 +14,6 @@ interface UserDao {
     @Query("SELECT * FROM users")
     suspend fun getUsers(): List<User>
 
-    @Query("SELECT * FROM messages WHERE id = :userId")
+    @Query("SELECT * FROM users WHERE id = :userId")
     suspend fun getUserById(userId: String): User
 }

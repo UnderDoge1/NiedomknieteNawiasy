@@ -62,6 +62,7 @@ fun ChatScreenContent(
 ) {
     val messages = chatViewModel.messages
     val friend = chatViewModel.currentFriend
+    val myId = chatViewModel.myId
     val keyboardController = LocalSoftwareKeyboardController.current
 
     var showDialog by remember {
@@ -128,7 +129,7 @@ fun ChatScreenContent(
                     true -> {
                         ReceivedMessageRow(
                             text = message.content,
-                            opponentName = friend.name,
+                            opponentName = friend.value?.name ?: "",
                             quotedMessage = null,
                             messageTime = message.date.format(DateTimeFormatter.ISO_DATE_TIME)
                         )
