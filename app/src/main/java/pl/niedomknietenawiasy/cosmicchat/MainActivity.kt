@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import pl.niedomknietenawiasy.cosmicchat.model.DatabaseProvider
 import pl.niedomknietenawiasy.cosmicchat.ui.ChatScreen
 import pl.niedomknietenawiasy.cosmicchat.ui.UserListScreen
 import pl.niedomknietenawiasy.cosmicchat.ui.theme.CosmicChatTheme
@@ -20,7 +21,8 @@ import pl.niedomknietenawiasy.cosmicchat.ui.theme.CosmicChatTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel = ChatViewModel()
+        val db = DatabaseProvider.getDatabase(this)
+        val viewModel = ChatViewModel(db)
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
@@ -37,10 +39,7 @@ class MainActivity : ComponentActivity() {
                             composable("chat/{id}") { backStackEntry ->
                                 val id = backStackEntry.arguments?.getString("id")
                                 ChatScreen(
-                                    "12",
-                                    "13",
-                                    "15",
-                                    "elko",
+                                    id!!,
                                     viewModel,
                                     navController,
                                     snackbarHostState,

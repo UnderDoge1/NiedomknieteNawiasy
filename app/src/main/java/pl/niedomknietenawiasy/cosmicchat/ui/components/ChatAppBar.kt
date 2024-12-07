@@ -103,10 +103,7 @@ fun ChatAppBar(
                         Toast.LENGTH_SHORT
                     ).show()
                 }) {
-                Icon(
-                    painter = painterResource(R.drawable.baseline_video_call_24),
-                    contentDescription = null
-                )
+                Icon(painter = painterResource(R.drawable.baseline_video_call_24), contentDescription = null)
             }
             IconButton(
                 onClick = {

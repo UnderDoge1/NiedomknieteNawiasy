@@ -61,10 +61,7 @@ internal fun ChatInput(
                         Toast.LENGTH_SHORT
                     ).show()
                 }) {
-                    Icon(
-                        painter = painterResource(R.drawable.baseline_add_reaction_24),
-                        contentDescription = "Mood"
-                    )
+                    Icon(painter = painterResource(R.drawable.baseline_add_reaction_24), contentDescription = "Mood")
                 }
             },
             trailingIcon = {
@@ -76,10 +73,7 @@ internal fun ChatInput(
                             Toast.LENGTH_SHORT
                         ).show()
                     }) {
-                        Icon(
-                            painter = painterResource(R.drawable.baseline_attach_file_24),
-                            contentDescription = "File"
-                        )
+                        Icon(painter = painterResource(R.drawable.baseline_attach_file_24), contentDescription = "File")
                     }
                     IconButton(onClick = {
                         Toast.makeText(
@@ -88,10 +82,7 @@ internal fun ChatInput(
                             Toast.LENGTH_SHORT
                         ).show()
                     }) {
-                        Icon(
-                            painter = painterResource(R.drawable.baseline_add_a_photo_24),
-                            contentDescription = "Camera"
-                        )
+                        Icon(painter = painterResource(R.drawable.baseline_add_a_photo_24), contentDescription = "Camera")
                     }
                 }
 
@@ -116,7 +107,7 @@ internal fun ChatInput(
             Icon(
                 painter = if (textEmpty)
                     painterResource(R.drawable.outline_adaptive_audio_mic_24)
-                else painterResource(R.drawable.baseline_arrow_outward_24),
+                    else painterResource(R.drawable.baseline_arrow_outward_24),
                 contentDescription = null
             )
         }

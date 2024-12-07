@@ -16,23 +16,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.chatwithme.presentation.chat.chatrow.ReceivedMessageRow
 import com.example.chatwithme.presentation.chat.chatrow.SentMessageRow
 import pl.niedomknietenawiasy.cosmicchat.ChatViewModel
+import pl.niedomknietenawiasy.cosmicchat.model.Message
+import pl.niedomknietenawiasy.cosmicchat.model.MessageStatus
 import pl.niedomknietenawiasy.cosmicchat.model.User
 import pl.niedomknietenawiasy.cosmicchat.ui.components.ChatAppBar
 import pl.niedomknietenawiasy.cosmicchat.ui.components.ChatInput
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ChatScreen(
-    chatRoomUUID: String,
-    opponentUUID: String,
-    registerUUID: String,
-    oneSignalUserId: String,
+    friendId: String,
     chatViewModel: ChatViewModel,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
@@ -43,12 +43,11 @@ fun ChatScreen(
             SnackbarController(this).showSnackbar(snackbarHostState, toastMessage, "Close")
         }
     }
-    chatViewModel.loadMessages()//chatRoomUUID, opponentUUID, registerUUID)
+    LaunchedEffect(key1 = Unit) {
+        chatViewModel.loadMessages(friendId)
+        chatViewModel.loadFriend(friendId)
+    }
     ChatScreenContent(
-        chatRoomUUID,
-        opponentUUID,
-        registerUUID,
-        oneSignalUserId,
         chatViewModel,
         navController,
     )
@@ -58,21 +57,12 @@ fun ChatScreen(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ChatScreenContent(
-    chatRoomUUID: String,
-    opponentUUID: String,
-    myId: String,
-    oneSignalUserId: String,
     chatViewModel: ChatViewModel,
     navController: NavHostController,
 ) {
     val messages = chatViewModel.messages
+    val friend = chatViewModel.currentFriend
     val keyboardController = LocalSoftwareKeyboardController.current
-
-    var opponentProfileFromFirebase by remember {
-        mutableStateOf(User(UUID.randomUUID(), "example", "active"))
-    }
-    val opponentName = opponentProfileFromFirebase.name
-    val opponentStatus = opponentProfileFromFirebase.status
 
     var showDialog by remember {
         mutableStateOf(false)
@@ -114,8 +104,8 @@ fun ChatScreenContent(
         val context = LocalContext.current
 
         ChatAppBar(
-            title = "$opponentName",
-            description = opponentStatus.lowercase(),
+            title = friend.value?.name ?: "",
+            description = friend.value?.status ?: "",
             onUserNameClick = {
                 Toast.makeText(context, "User Profile Clicked", Toast.LENGTH_SHORT).show()
             }, onBackArrowClick = {
@@ -134,17 +124,16 @@ fun ChatScreenContent(
             state = scrollState
         ) {
             items(messages.value) { message ->
-                when (message.senderId.toString() == myId) {
+                when (message.senderId.toString() == myId){
                     true -> {
                         ReceivedMessageRow(
                             text = message.content,
-                            opponentName = opponentName,
+                            opponentName = friend.name,
                             quotedMessage = null,
                             messageTime = message.date.format(DateTimeFormatter.ISO_DATE_TIME)
                         )
                     }
-
-                    false -> {
+                    false ->{
                         SentMessageRow(
                             text = message.content,
                             quotedMessage = null,
@@ -157,9 +146,16 @@ fun ChatScreenContent(
 
         }
         ChatInput(
+            modifier = Modifier.padding(4.dp),
             onMessageChange = { messageContent ->
-                chatViewModel.sendMessage()
-                //TODO
+                chatViewModel.sendMessage(
+                    Message(
+                        senderId = myId,
+                        content = messageContent,
+                        date = LocalDateTime.now(),
+                        status = MessageStatus.SENT
+                    )
+                )
             },
             onFocusEvent = {
                 isChatInputFocus = it
