@@ -7,6 +7,8 @@ data class Vector3d(val x: Double, val y: Double, val z: Double) {
   operator fun plus(other: Vector3d): Vector3d =
       Vector3d(x + other.x, y + other.y, z + other.z)
 
+operator fun plus(other: Double): Vector3d =
+    Vector3d(other + x, other + y, other + z)
   operator fun minus(other: Vector3d): Vector3d =
       Vector3d(x - other.x, y - other.y, z - other.z)
 
@@ -41,9 +43,9 @@ fun calculateCurrentSenderPosition(
     senderRegisterdVelocity: Vector3d,
     senderReportTime: Double,
     timeNow: Double,
-){
-    Dt = timeNow - senderReportTime
-    return senderRegisterdPosition + senderRegisterdVelocity * Dt
+) : Vector3d {
+    val Dt = timeNow - senderReportTime
+    return senderRegisterdVelocity * Dt
 }
 fun calculateInterceptTime(
     senderPos: Vector3d,    // znana
@@ -64,12 +66,11 @@ fun calculateInterceptTime(
 }
 
 fun calculateInterceptPoint(
-    val intercept_time : Double,
-    val receiverPos: Vector3d,
-    val receiverVel: Vector3d
-){
-  return Vector3d = receiverPos + receiverVel * intercept_time
-}
+    intercept_time : Double,
+    receiverPos: Vector3d,
+    receiverVel: Vector3d
+) : Vector3d = receiverPos + receiverVel * intercept_time
+
 
 
 fun calculateTimes(
