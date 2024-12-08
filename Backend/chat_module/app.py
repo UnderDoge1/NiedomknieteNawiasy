@@ -59,4 +59,4 @@ def left(message):
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app,'0.0.0.0', 5000, allow_unsafe_werkzeug=True)
