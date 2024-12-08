@@ -39,14 +39,12 @@ def chat():
 @socketio.on('join', namespace='/chat')
 def join():
     room = session.get('room')
-    join_room(room)
-    emit('status', {'msg': session.get('username') + ' has entered the room.'}, room=room)
-
-
+    join_room("1")
+    emit('status', {'msg': 'elko' + ' has entered the room.'}, room="1")
 @socketio.on('text', namespace='/chat')
 def text(message):
     room = session.get('room')
-    emit('message', {'msg': session.get('username') + ' : ' + message['msg']}, room=room)
+    emit('message', {'msg': message['msg'], 'senderId': message['senderId']}, room="1")
 
 
 @socketio.on('left', namespace='/chat')
