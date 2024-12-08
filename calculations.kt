@@ -45,13 +45,13 @@ fun calculateCurrentSenderPosition(
     timeNow: Double,
 ) : Vector3d {
     val Dt = timeNow - senderReportTime
-    return senderRegisterdVelocity * Dt
+    return senderRegisterdVelocity * Dt + senderRegisterdPosition
 }
 fun calculateInterceptTime(
     senderPos: Vector3d,    // znana
-    senderVel: Vector3d,    // znana
+    senderVel: Vector3d,    // z rejestru radiolatarni
     receiverPos: Vector3d,  // w momencie wysłania sygnału
-    receiverVel: Vector3d   // z rejestru
+    receiverVel: Vector3d   // z rejestru radiolatarni
 ): Double? {
     val d0 = receiverPos - senderPos
     val vRel = receiverVel - senderVel
@@ -61,15 +61,15 @@ fun calculateInterceptTime(
     val cTerm = d0.norm() * d0.norm()
 
     return solveQuadratic(a, b, cTerm)?.let { (t1, t2) ->
-        listOf(t1, t2).filter { it > 0 }.minOrNull() // Wybierz > 0
+        listOf(t1, t2).filter { it > 0 }.minOrNull() //  > 0
     }
 }
 
 fun calculateInterceptPoint(
-    intercept_time : Double,
+    interceptTime : Double,
     receiverPos: Vector3d,
     receiverVel: Vector3d
-) : Vector3d = receiverPos + receiverVel * intercept_time
+) : Vector3d = receiverPos + receiverVel * interceptTime
 
 
 
