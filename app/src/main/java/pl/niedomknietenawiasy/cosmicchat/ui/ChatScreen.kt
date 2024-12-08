@@ -101,6 +101,7 @@ fun ChatScreenContent(
             onUserNameClick = {
                 Toast.makeText(context, "User Profile Clicked", Toast.LENGTH_SHORT).show()
             }, onBackArrowClick = {
+                chatViewModel.leaveChat()
                 navController.popBackStack()
             }, onUserProfilePictureClick = {
                 showDialog = true

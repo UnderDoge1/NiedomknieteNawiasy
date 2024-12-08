@@ -29,7 +29,7 @@
             chat.addEventListener("click", (element) => {
                 var text = document.querySelector('#text').value
                 document.querySelector('#text').value = ''
-                socket.emit('text', {msg: text});
+                socket.emit('text', {msg: text, senderId: "someId"});
             })
 
         });
