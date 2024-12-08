@@ -85,55 +85,57 @@ fun ChatScreenContent(
     }
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .focusable()
-            .wrapContentHeight()
-            .imePadding()
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = { keyboardController?.hide() })
-            }
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
+//            .focusable()
+//            .wrapContentHeight()
+//            .imePadding()
+//            .pointerInput(Unit) {
+//                detectTapGestures(onTap = { keyboardController?.hide() })
+//            }
     ) {
         val context = LocalContext.current
-
-        ChatAppBar(
-            title = friend.value?.name ?: "",
-            description = friend.value?.status ?: "",
-            onUserNameClick = {
-                Toast.makeText(context, "User Profile Clicked", Toast.LENGTH_SHORT).show()
-            }, onBackArrowClick = {
-                chatViewModel.leaveChat()
-                navController.popBackStack()
-            }, onUserProfilePictureClick = {
-                showDialog = true
-            },
-            onMoreDropDownBlockUserClick = {
-                //POC
-            }
-        )
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            state = scrollState
+        Column(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            items(messages.value) { message ->
-                if (message.senderId == myId) {
-                    SentMessageRow(
-                        text = message.content,
-                        quotedMessage = null,
-                        messageTime = "${message.date.hour}:${message.date.minute}",
-                        messageStatus = message.status
-                    )
-                } else {
-                    ReceivedMessageRow(
-                        text = message.content,
-                        opponentName = friend.value?.name ?: "",
-                        quotedMessage = null,
-                        messageTime = "${message.date.hour}:${message.date.minute}"
-                    )
+            ChatAppBar(
+                title = friend.value?.name ?: "",
+                description = friend.value?.status ?: "",
+                onUserNameClick = {
+                    Toast.makeText(context, "User Profile Clicked", Toast.LENGTH_SHORT).show()
+                }, onBackArrowClick = {
+                    chatViewModel.leaveChat()
+                    navController.popBackStack()
+                }, onUserProfilePictureClick = {
+                    showDialog = true
+                },
+                onMoreDropDownBlockUserClick = {
+                    //POC
+                }
+            )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                state = scrollState
+            ) {
+                items(messages.value) { message ->
+                    if (message.senderId == myId) {
+                        SentMessageRow(
+                            text = message.content,
+                            quotedMessage = null,
+                            messageTime = "${message.date.hour}:${message.date.minute}",
+                            messageStatus = message.status
+                        )
+                    } else {
+                        ReceivedMessageRow(
+                            text = message.content,
+                            opponentName = friend.value?.name ?: "",
+                            quotedMessage = null,
+                            messageTime = "${message.date.hour}:${message.date.minute}"
+                        )
+                    }
                 }
             }
-
         }
         ChatInput(
             modifier = Modifier.padding(4.dp),

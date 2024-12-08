@@ -2,6 +2,7 @@ package pl.niedomknietenawiasy.cosmicchat
 
 import SocketIOClient
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,10 +22,10 @@ class ChatViewModel(
 ): ViewModel() {
     val api = ApiService()
     val toastMsg = "example toast msg"
-    val userList = mutableStateOf(listOf<User>())
+    var userList = mutableStateOf(listOf<User>())
     val myId = pref.getString("userId", "").let {
         if (it.isNullOrEmpty()) {
-            val newId = getRandomString()
+            val newId = listOf("Paweł", "Filip", "Jan", "Marysia", "Patryk", "Kasia", "Oskar", "Maksym", "Ola", "Marcin").shuffled()[0]
             pref.edit().putString("userId", newId).apply()
             newId
         } else { it }
@@ -34,15 +35,31 @@ class ChatViewModel(
 
     init {
         viewModelScope.launch {
-            val users = db.userDao().getUsers()
-            if (users.isNotEmpty()) {
-                userList.value = users.filter { it.id != myId }
-            } else {
-                userList.value = dummyUsers
-                (dummyUsers + User(myId, "Paweł", "active")).forEach {
-                    db.userDao().insertUser(it)
-                }
+//            val users = db.userDao().getUsers()
+//            if (users.isNotEmpty()) {
+//                userList.value = users.filter { it.id != myId }
+//            } else {
+//                userList.value = dummyUsers
+//                (dummyUsers + User(myId, "Paweł", "active")).forEach {
+//                    db.userDao().insertUser(it)
+//                }
+//            }
+            api.updateUser(User(myId, myId, "active"))
+            val users = api.getUsers().map {
+                User(
+                    id = it.call_sign,
+                    name = it.call_sign,
+                    status = "active"
+                )
             }
+            Log.d("Users", users.map { it.id }.reduce { acc, s -> acc + ", " + s } )
+            userList.value = api.getUsers().map {
+                User(
+                    id = it.call_sign,
+                    name = it.call_sign,
+                    status = "active"
+                )
+            }.filter { it.id != myId }
         }
     }
 
@@ -53,8 +70,6 @@ class ChatViewModel(
     fun loadMessages(friendId: String) {
         viewModelScope.launch {
             messages.value = messageDao.getMessagesByFriendId(friendId)
-            val me = db.userDao().getUserById(myId)
-            api.enterRoom(me.name)
             webSocketClient.connect { m, id ->
                 viewModelScope.launch {
                     val message = Message(

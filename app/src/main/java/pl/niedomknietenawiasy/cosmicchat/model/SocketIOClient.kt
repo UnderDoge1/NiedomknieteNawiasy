@@ -19,7 +19,7 @@ class SocketIOClient() {
                 println("Status: ${data.getString("msg")}")
             }.on("message") { args ->
                 val data = args[0] as JSONObject
-                println("Message: ${data.getString("msg")}")
+                println("Message: ${data}")
                 onMessage(data.getString("msg"), data.getString("senderId"))
             }
             socket.connect()
