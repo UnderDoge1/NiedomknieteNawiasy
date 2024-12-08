@@ -1,7 +1,6 @@
 import math
-from datetime import datetime
 
-lighthouse1 = [2,4,0,0]
+lighthouse1 = [2,4,]
 speed_of_light = 2
 ship1 = [0,0,0,0,0]#[x,y,vx,vy,t]
 ship2 = [2,2,1,1,0]
@@ -50,7 +49,7 @@ def register (ship,lighthouse):
     travel_time = distance(lighthouse,ship)/speed_of_light
     position = position(ship,travel_time)
     t = datetime.now()
-    ship_reg = [ship[0],ship[1],position[0],position[1],t]
+    ship_reg = [position[0],position[1],ship[2],ship[3],t]
     return ship_reg
     #zwraca obecną pozycję i prędkość statku w czasie
 
